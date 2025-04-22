@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
@@ -129,10 +130,26 @@ public class Pen : MonoBehaviour
         */
 
         GameObject drawnCube = Instantiate(cubeToDraw);
+        
+        float minScale = 0.010f;
+        float maxScale = 0.050f;
+        float scaleValue = Mathf.Lerp(minScale, maxScale, triggerValue);
+
+        drawnCube.transform.localScale = Vector3.one * scaleValue;
+        drawnCube.transform.rotation = tip.rotation;
         drawnCube.transform.position = tip.position;
 
+        // float minScale = 0.001f;
+        // float maxScale = 1.010f;
+        // float uniformScale =Mathf.Lerp(minScale, maxScale, triggerValue);
+
+        
+
         GameObject drawnSphere = Instantiate(sphereToDraw);
+        //drawnSphere.transform.localScale = Vector3.one * scaleValue;
         drawnSphere.transform.position = tip.position;
+        drawnSphere.transform.rotation = tip.rotation;
+
     }
 
     private void SwitchColor()
@@ -146,7 +163,7 @@ public class Pen : MonoBehaviour
         // return controller.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out float triggerValue) && triggerValue > 0.1f;
         bool triggerPressed =  controller.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out triggerValue) && triggerValue > 0.001f;
         // print("triggerPressed = " + triggerPressed);
-        // print("triggerValue = " + triggerValue);
+        print("triggerValue = " + triggerValue);
         return triggerPressed;
     }
 
