@@ -21,6 +21,10 @@ public class Pen : MonoBehaviour
     public GameObject cubeToDraw;
     public GameObject sphereToDraw;
 
+    [Header("Drawing")]
+    public StrokeBuilder_Tube giselistiStrokeBuilder;
+    public Transform drawingTransform;
+
 
     [Header("XR Interaction")]
     public XRGrabInteractable grabInteractable;
@@ -35,6 +39,8 @@ public class Pen : MonoBehaviour
     private UnityEngine.XR.InputDevice rightController;
 
     private float triggerValue;
+    private bool firstTimePressingTrigger = true;
+    private GameObject currentStrokeGameObject;
 
 
     private void Start()
@@ -69,11 +75,28 @@ public class Pen : MonoBehaviour
 
         if (isRightHandDrawing || isLeftHandDrawing)
         {
-            Draw();
+            if (firstTimePressingTrigger)
+            {
+                currentStrokeGameObject = giselistiStrokeBuilder.CreateStroke(drawingTransform, drawingMaterial, tip, triggerValue);
+                firstTimePressingTrigger = false;
+            }
+            else  // If trigger is still held down
+            {
+                giselistiStrokeBuilder.AddSampleToStroke(currentStrokeGameObject,drawingMaterial, tip, triggerValue);
+            }
+            // Draw();
         }
         else if (currentDrawing != null)
         {
             currentDrawing = null;
+        }
+        else  // If trigger is released
+        {
+            if (currentStrokeGameObject != null)
+            {
+                giselistiStrokeBuilder.CompleteStroke(currentStrokeGameObject, drawingMaterial, tip, triggerValue);
+                firstTimePressingTrigger = true;
+            }
         }
 
         // Switch color if button is pressed
@@ -94,7 +117,9 @@ public class Pen : MonoBehaviour
     }
 
     private void Draw()
-    { /*
+    { 
+        //  Line Renderer Transparency concept
+        /*
         if (currentDrawing == null)
         {
             index = 0;
@@ -129,27 +154,33 @@ public class Pen : MonoBehaviour
         penWidth = triggerValue / 100f;
         */
 
-        GameObject drawnCube = Instantiate(cubeToDraw);
+        // Instantiated 3d gameobjects--------------------------------------------------------------------
+
+        // GameObject drawnCube = Instantiate(cubeToDraw);
         
-        float minScale = 0.010f;
-        float maxScale = 0.050f;
-        float scaleValue = Mathf.Lerp(minScale, maxScale, triggerValue);
+        // float minScale = 0.010f;
+        // float maxScale = 0.050f;
+        // float scaleValue = Mathf.Lerp(minScale, maxScale, triggerValue);
 
-        drawnCube.transform.localScale = Vector3.one * scaleValue;
-        drawnCube.transform.rotation = tip.rotation;
-        drawnCube.transform.position = tip.position;
+        // drawnCube.transform.localScale = Vector3.one * scaleValue;
+        // drawnCube.transform.rotation = tip.rotation;
+        // drawnCube.transform.position = tip.position;
 
-        // float minScale = 0.001f;
-        // float maxScale = 1.010f;
-        // float uniformScale =Mathf.Lerp(minScale, maxScale, triggerValue);
+        // // float minScale = 0.001f;
+        // // float maxScale = 1.010f;
+        // // float uniformScale =Mathf.Lerp(minScale, maxScale, triggerValue);
 
         
 
-        GameObject drawnSphere = Instantiate(sphereToDraw);
-        //drawnSphere.transform.localScale = Vector3.one * scaleValue;
-        drawnSphere.transform.position = tip.position;
-        drawnSphere.transform.rotation = tip.rotation;
+        // GameObject drawnSphere = Instantiate(sphereToDraw);
+        // //drawnSphere.transform.localScale = Vector3.one * scaleValue;
+        // drawnSphere.transform.position = tip.position;
+        // drawnSphere.transform.rotation = tip.rotation;
+        //---------------------------------------------------------------------------------------------------
 
+        GameObject strokeGameObject = giselistiStrokeBuilder.CreateStroke(drawingTransform, drawingMaterial, tip, triggerValue);
+        giselistiStrokeBuilder.AddSampleToStroke(strokeGameObject,drawingMaterial, tip, triggerValue);
+        giselistiStrokeBuilder.CompleteStroke(strokeGameObject, drawingMaterial, tip, triggerValue);
     }
 
     private void SwitchColor()

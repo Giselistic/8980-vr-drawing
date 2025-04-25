@@ -14,6 +14,7 @@
     "com.unity.xr.management": "4.4.0",
     "com.unity.xr.meta-openxr": "1.0.3",
     "com.unity.xr.openxr": "1.12.0",
+    "edu.umn.cs.ivlab.minvr3": "https://github.com/ivlab/MinVR3-UnityPackage.git",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
