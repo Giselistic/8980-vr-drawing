@@ -34,12 +34,15 @@ public class Pen : MonoBehaviour
     private LineRenderer currentDrawing;
     private int index;
     private int currentColorIndex;
-    private bool isGrabbed = false;
+    private bool isLeftGrabbed = false;
+    private bool isRightGrabbed = false;
     private UnityEngine.XR.InputDevice leftController;
     private UnityEngine.XR.InputDevice rightController;
 
-    private float triggerValue;
-    private bool firstTimePressingTrigger = true;
+    private float LeftTriggerValue;
+    private float RightTriggerValue;
+    private bool firstTimePressingLeftTrigger = true;
+    private bool firstTimePressingRightTrigger = true;
     private GameObject currentStrokeGameObject;
 
 
@@ -51,16 +54,16 @@ public class Pen : MonoBehaviour
 
     IEnumerator InitCouroutine()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
 
         currentColorIndex = 0;
-        tipMaterial.color = penColors[currentColorIndex];
+        // tipMaterial.color = penColors[currentColorIndex];
 
         // Subscribe to grab events
         if (grabInteractable != null)
         {
-            grabInteractable.selectEntered.AddListener(OnGrab);
-            grabInteractable.selectExited.AddListener(OnRelease);
+            grabInteractable.selectEntered.AddListener(OnLeftGrab);
+            grabInteractable.selectExited.AddListener(OnLeftRelease);
         }
 
                 // Get input devices for left and right controllers
@@ -70,19 +73,19 @@ public class Pen : MonoBehaviour
 
     private void Update()
     {
-        bool isRightHandDrawing = isGrabbed && IsTriggerPressed(rightController);
-        bool isLeftHandDrawing = isGrabbed && IsTriggerPressed(leftController);
+        bool isRightHandDrawing = isRightGrabbed && IsRightTriggerPressed(rightController);
+        bool isLeftHandDrawing = isLeftGrabbed && IsLeftTriggerPressed(leftController);
 
         if (isRightHandDrawing || isLeftHandDrawing)
         {
-            if (firstTimePressingTrigger)
+            if (firstTimePressingLeftTrigger)
             {
-                currentStrokeGameObject = giselistiStrokeBuilder.CreateStroke(drawingTransform, drawingMaterial, tip, triggerValue);
-                firstTimePressingTrigger = false;
+                currentStrokeGameObject = giselistiStrokeBuilder.CreateStroke(drawingTransform, drawingMaterial, tip, LeftTriggerValue);
+                firstTimePressingLeftTrigger = false;
             }
             else  // If trigger is still held down
             {
-                giselistiStrokeBuilder.AddSampleToStroke(currentStrokeGameObject,drawingMaterial, tip, triggerValue);
+                giselistiStrokeBuilder.AddSampleToStroke(currentStrokeGameObject,drawingMaterial, tip, LeftTriggerValue);
             }
             // Draw();
         }
@@ -94,26 +97,37 @@ public class Pen : MonoBehaviour
         {
             if (currentStrokeGameObject != null)
             {
-                giselistiStrokeBuilder.CompleteStroke(currentStrokeGameObject, drawingMaterial, tip, triggerValue);
-                firstTimePressingTrigger = true;
+                giselistiStrokeBuilder.CompleteStroke(currentStrokeGameObject, drawingMaterial, tip, LeftTriggerValue);
+                firstTimePressingLeftTrigger = true;
             }
         }
 
         // Switch color if button is pressed
-        if (IsPrimaryButtonPressed(rightController) || IsPrimaryButtonPressed(leftController))
-        {
-            SwitchColor();
-        }
+        // if (IsPrimaryButtonPressed(rightController) || IsPrimaryButtonPressed(leftController))
+        // {
+        //     SwitchColor();
+        // }
     }
 
-    private void OnGrab(SelectEnterEventArgs args)
+    private void OnLeftGrab(SelectEnterEventArgs args)
     {
-        isGrabbed = true;
+        // Check if left or right hand is grabbing with args
+        isLeftGrabbed = true;
     }
 
-    private void OnRelease(SelectExitEventArgs args)
+    private void OnRightGrab(SelectEnterEventArgs args)
     {
-        isGrabbed = false;
+        isRightGrabbed = true;
+    }
+
+    private void OnLeftRelease(SelectExitEventArgs args)
+    {
+        isLeftGrabbed = false;
+    }
+
+    private void OnRightRelease(SelectExitEventArgs args)
+    {
+        isRightGrabbed = false;
     }
 
     private void Draw()
@@ -178,25 +192,36 @@ public class Pen : MonoBehaviour
         // drawnSphere.transform.rotation = tip.rotation;
         //---------------------------------------------------------------------------------------------------
 
-        GameObject strokeGameObject = giselistiStrokeBuilder.CreateStroke(drawingTransform, drawingMaterial, tip, triggerValue);
-        giselistiStrokeBuilder.AddSampleToStroke(strokeGameObject,drawingMaterial, tip, triggerValue);
-        giselistiStrokeBuilder.CompleteStroke(strokeGameObject, drawingMaterial, tip, triggerValue);
+        // GameObject strokeGameObject = giselistiStrokeBuilder.CreateStroke(drawingTransform, drawingMaterial, tip, LeftTriggerValue);
+        // giselistiStrokeBuilder.AddSampleToStroke(strokeGameObject,drawingMaterial, tip, LeftTriggerValue);
+        // giselistiStrokeBuilder.CompleteStroke(strokeGameObject, drawingMaterial, tip, LeftTriggerValue);
     }
 
-    private void SwitchColor()
-    {
-        currentColorIndex = (currentColorIndex + 1) % penColors.Length;
-        tipMaterial.color = penColors[currentColorIndex];
-    }
+    // private void SwitchColor()
+    // {
+    //     currentColorIndex = (currentColorIndex + 1) % penColors.Length;
+    //     tipMaterial.color = penColors[currentColorIndex];
+    // }
 
-    private bool IsTriggerPressed(UnityEngine.XR.InputDevice controller)
+    private bool IsLeftTriggerPressed(UnityEngine.XR.InputDevice leftController)
     {
         // return controller.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out float triggerValue) && triggerValue > 0.1f;
-        bool triggerPressed =  controller.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out triggerValue) && triggerValue > 0.001f;
+        bool leftTriggerPressed =  leftController.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out LeftTriggerValue) && LeftTriggerValue > 0.0001f;
         // print("triggerPressed = " + triggerPressed);
-        print("triggerValue = " + triggerValue);
-        return triggerPressed;
+        print("triggerValue = " + LeftTriggerValue);
+        return leftTriggerPressed;
     }
+
+        private bool IsRightTriggerPressed(UnityEngine.XR.InputDevice rightController)
+    {
+        // return controller.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out float triggerValue) && triggerValue > 0.1f;
+        bool rightTriggerPressed =  rightController.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out RightTriggerValue) && RightTriggerValue > 0.0001f;
+        // print("triggerPressed = " + triggerPressed);
+        print("triggerValue = " + RightTriggerValue);
+        return rightTriggerPressed;
+    }
+
+
 
     private bool IsPrimaryButtonPressed(UnityEngine.XR.InputDevice controller)
     {

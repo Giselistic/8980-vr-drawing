@@ -39,18 +39,21 @@ public class TubeGeometry : MonoBehaviour
     private List<float> m_ArcLengths;
     private Vector3 m_LastBrushPosInRoom;
 
+    public bool BrushSizeWorking = true;
+    public float SizeScale = 0.01f;
+
 
     private void Reset()
     {
 #if UNITY_EDITOR
         m_Material = AssetDatabase.GetBuiltinExtraResource<Material>("Default-Diffuse.mat");
 #endif
-        m_NFaces = 6;
+        m_NFaces = 8;
         m_WrapTwice = false;
         m_TexMode = TextureMode.RepeatTexture;
     }
 
-    public void Init(Vector3 brushPosRoom, Quaternion brushRotRoom, float brushWidthRoom, float brushHeightRoom, Color brushColor)
+    public void Init(Vector3 brushPosRoom, Quaternion brushRotRoom, float penScale, Color brushColor, float pressure)
     {
         m_Vertices = new List<Vector3>();
         m_Normals = new List<Vector3>();
@@ -74,63 +77,121 @@ public class TubeGeometry : MonoBehaviour
         //}
     }
 
-    public void AddSample(Vector3 brushPosWorld, Quaternion brushRotWorld, float brushWidthWorld, float brushHeightWorld, Color brushColor)
+    public void AddSample(Vector3 brushPosWorld, Quaternion brushRotWorld, float penScale, Color brushColor, float pressure)
     {
         // convert these into the local space of the stroke, which has already been added to the artwork parent
         Vector3 brushPosLocal = this.transform.WorldPointToLocalSpace(brushPosWorld);
         Quaternion brushRotLocal = this.transform.WorldRotationToLocalSpace(brushRotWorld);
 
-        Vector3 brushRightLocal = brushRotLocal * Vector3.right;
-        Vector3 brushRightScaledLocal = brushRightLocal * transform.WorldLengthToLocalSpace(0.5f * brushWidthWorld);
-        Vector3 brushUpLocal = brushRotLocal * Vector3.up;
-        Vector3 brushUpScaledLocal = brushUpLocal * transform.WorldLengthToLocalSpace(0.5f * brushHeightWorld);
-        
+        Vector3 brushRightLocal;
+        Vector3 brushRightScaledLocal;
+        Vector3 brushUpLocal;
+        Vector3 brushUpScaledLocal;
+
+        // brushWidthWorld and brushHeightWorld
+        if (BrushSizeWorking)
+        {
+            brushRightLocal = brushRotLocal * Vector3.right;
+            brushRightScaledLocal = brushRightLocal * transform.WorldLengthToLocalSpace(0.5f * penScale);
+            brushUpLocal = brushRotLocal * Vector3.up;
+            brushUpScaledLocal = brushUpLocal * transform.WorldLengthToLocalSpace(0.5f * penScale);
+        }
+        else
+        {
+            brushRightLocal = brushRotLocal * Vector3.right;
+            brushRightScaledLocal = brushRightLocal * SizeScale;
+            brushUpLocal = brushRotLocal * Vector3.up;
+            brushUpScaledLocal = brushUpLocal * SizeScale;
+        }
+
         // update arc length and calc v texcoord
         float deltaPos = 0.0f;
-        if (m_ArcLengths.Count == 0) {
+        if (m_ArcLengths.Count == 0)
+        {
             m_ArcLengths.Add(deltaPos);
-        } else {
+        }
+        else
+        {
             Vector3 delta = (brushPosWorld - m_LastBrushPosInRoom);
-            if (delta.sqrMagnitude > 0.0f) {
+            if (delta.sqrMagnitude > 0.0f)
+            {
                 deltaPos = delta.magnitude;
             }
             m_ArcLengths.Add(m_ArcLengths[m_ArcLengths.Count - 1] + deltaPos);
         }
         m_LastBrushPosInRoom = brushPosWorld;
-        float texWidthRoom = 2.0f * Mathf.PI * brushWidthWorld;
-        if (m_WrapTwice) {
+        float texWidthRoom = 2.0f * Mathf.PI * penScale;
+        if (m_WrapTwice)
+        {
             texWidthRoom *= 0.5f;
         }
         float v = m_LastV;
-        if (texWidthRoom > 0.0f) {
+        if (texWidthRoom > 0.0f)
+        {
             v += deltaPos / texWidthRoom;
         }
         m_LastV = v;
 
 
         // add a new ring of vertices and associated data
-        float a = 0;
-        for (int j = 0; j <= m_NFaces; j++) {
+        float angleStep = Mathf.PI * 2f / m_NFaces;
+        for (int j = 0; j <= m_NFaces; j++)
+        {
+
+            //=====================================================================================
             // store verts
-            Vector3 thisVert = brushPosLocal + brushRightScaledLocal * Mathf.Cos(a) + brushUpScaledLocal * Mathf.Sin(a);
+            // Vector3 thisVert = brushPosLocal + brushRightScaledLocal * Mathf.Cos(a) + brushUpScaledLocal * Mathf.Sin(a);
+            // m_Vertices.Add(thisVert);
+
+            // // store normals
+            // m_Normals.Add((brushRightLocal * Mathf.Cos(a) + brushUpLocal * Mathf.Sin(a)).normalized);
+            //=======================================================================================================
+            float a = j * angleStep;
+
+            float x_circle = Mathf.Cos(a);
+            float y_circle = Mathf.Sin(a);
+
+            float x_square = Mathf.Sign(x_circle);
+            float y_square = Mathf.Sign(y_circle);
+
+            float morphX = Mathf.Lerp(x_square, x_circle, pressure);
+            float morphY = Mathf.Lerp(y_square, y_circle, pressure);
+
+            // float morphX = x_circle;
+            // float morphY = y_circle;
+
+            Vector3 thisVert = brushPosLocal + brushRightScaledLocal * morphX + brushUpScaledLocal * morphY;
+
+            // if (BrushSizeWorking)
+            // {
+            //     thisVert = brushPosLocal + brushRightScaledLocal * morphX + brushUpScaledLocal * morphY;
+            // }
+            // else
+            // {
+            //     thisVert = brushPosLocal + Vector3.right * SizeScale * morphX + Vector3.up * SizeScale * morphY;
+            // }
+
             m_Vertices.Add(thisVert);
 
-            // store normals
-            m_Normals.Add((brushRightLocal * Mathf.Cos(a) + brushUpLocal * Mathf.Sin(a)).normalized);
+            Vector3 normal = (brushRightLocal * morphX + brushUpLocal * morphY).normalized;
+            m_Normals.Add(normal);
 
             // store colors
             m_Colors.Add(brushColor);
 
             // store tex coords
             float u;
-            if (m_WrapTwice) {
+            if (m_WrapTwice)
+            {
                 // To wrap twice around the tube
                 int halfverts = Mathf.RoundToInt((float)m_NFaces / 2.0f);
                 if (j < halfverts)
                     u = (float)j / (float)halfverts;
                 else
                     u = 1.0f - (float)(j - halfverts) / (float)halfverts;
-            } else {
+            }
+            else
+            {
                 // to wrap once around the tube
                 u = (float)j / (float)m_NFaces;
             }
@@ -141,11 +202,13 @@ public class TubeGeometry : MonoBehaviour
         }
 
         // add triangles connecting this ring to the previous
-        if (m_ArcLengths.Count > 1) {
+        if (m_ArcLengths.Count > 1)
+        {
             int iStartOfLastRing = m_Vertices.Count - 2 * (m_NFaces + 1);
             int iStartOfThisRing = m_Vertices.Count - (m_NFaces + 1);
 
-            for (int f = 0; f < m_NFaces; f++) {
+            for (int f = 0; f < m_NFaces; f++)
+            {
                 int lastV0 = iStartOfLastRing + f;
                 int lastV1 = iStartOfLastRing + f + 1;
 
@@ -176,11 +239,14 @@ public class TubeGeometry : MonoBehaviour
 
 
         // if stretching the texture, the v tex coords across the whole length of the tube need to be updated
-        if (m_TexMode == TextureMode.StretchTexture) {
-            for (int n = 0; n < m_ArcLengths.Count; n++) {
+        if (m_TexMode == TextureMode.StretchTexture)
+        {
+            for (int n = 0; n < m_ArcLengths.Count; n++)
+            {
                 float vNew = m_ArcLengths[n] / m_ArcLengths[m_ArcLengths.Count - 1];
                 int iStartOfRingN = n * (m_NFaces + 1);
-                for (int f = 0; f <= m_NFaces; f++) {
+                for (int f = 0; f <= m_NFaces; f++)
+                {
                     int i = iStartOfRingN + f;
                     m_TexCoords[i] = new Vector2(m_TexCoords[i].x, vNew);
                 }
@@ -193,11 +259,11 @@ public class TubeGeometry : MonoBehaviour
         m_Mesh.SetNormals(m_Normals);
         m_Mesh.SetColors(m_Colors);
         m_Mesh.SetUVs(0, m_TexCoords);
-        m_Mesh.SetIndices(m_Indices, MeshTopology.Triangles, 0);        
+        m_Mesh.SetIndices(m_Indices, MeshTopology.Triangles, 0);
     }
 
 
-    public void Complete(Vector3 brushPosRoom, Quaternion brushRotRoom, float brushWidthRoom, float brushHeightRoom, Color brushColor)
+    public void Complete(Vector3 brushPosRoom, Quaternion brushRotRoom, float brushWidthRoom, float brushHeightRoom, Color brushColor, float pressure)
     {
         // If the current scale is > 0, then add a sample
         //if (brushScaleRoom != Vector3.zero) {
@@ -215,7 +281,8 @@ public class TubeGeometry : MonoBehaviour
     public void SetMaterial(Material mat)
     {
         m_Material = mat;
-        if (m_MeshRend != null) {
+        if (m_MeshRend != null)
+        {
             m_MeshRend.material = mat;
         }
     }

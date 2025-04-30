@@ -1723,7 +1723,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1249617917}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2188,8 +2188,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TexMode: 0
   m_AspectRatio: 1
-  m_NFaces: 6
+  m_NFaces: 8
   m_WrapTwice: 0
+  BrushSizeWorking: 0
+  SizeScale: 0.01
 --- !u!1 &1591370560 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 202364687, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
