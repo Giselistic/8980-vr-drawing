@@ -15,11 +15,11 @@ public class Pen : MonoBehaviour
     public Transform tip;
     public Material drawingMaterial;
     public Material tipMaterial;
-    [Range(0.01f, 0.1f)]
-    public float penWidth = 0.01f;
-    public Color[] penColors;
-    public GameObject cubeToDraw;
-    public GameObject sphereToDraw;
+    [Range(0.01f, 0.5f)]
+    // public float penWidth = 0.01f;
+    // public Color[] penColors;
+    // public GameObject cubeToDraw;
+    // public GameObject sphereToDraw;
 
     [Header("Drawing")]
     public StrokeBuilder_Tube giselistiStrokeBuilder;
@@ -38,6 +38,11 @@ public class Pen : MonoBehaviour
     private bool isRightGrabbed = false;
     private UnityEngine.XR.InputDevice leftController;
     private UnityEngine.XR.InputDevice rightController;
+
+    private XRNode activeDrawingHand;
+    // private XRNode oppositeHand => activeDrawingHand == XRNode.LeftHand ? XRNode.RightHand : XRNode.LeftHand;
+
+
 
     private float LeftTriggerValue;
     private float RightTriggerValue;
@@ -74,65 +79,117 @@ public class Pen : MonoBehaviour
         rightController = UnityEngine.XR.InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
     }
 
+    private void UpdateTriggerValues()
+{
+    leftController.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out LeftTriggerValue);
+    rightController.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out RightTriggerValue);
+}
+
+
+// ===============================================================================================================================
     private void Update()
     {
-        bool isRightHandDrawing = isRightGrabbed && IsRightTriggerPressed(rightController);
-        bool isLeftHandDrawing = isLeftGrabbed && IsLeftTriggerPressed(leftController);
-        bool isRightandLeftHandDrawing = isRightGrabbed && IsLeftTriggerPressed(rightController);
-        bool isLeftandRightHandDrawing = isLeftGrabbed && IsRightTriggerPressed(leftController);
+        
+        UpdateTriggerValues();
 
-        if (isLeftHandDrawing)
+        float morphTriggerValue;
+        float sizeTriggerValue;
+
+        if (activeDrawingHand == XRNode.LeftHand)
         {
-            if (firstTimePressingLeftTrigger)
-            {
-                currentStrokeGameObject = giselistiStrokeBuilder.CreateStroke(drawingTransform, drawingMaterial, tip, LeftTriggerValue);
-                firstTimePressingLeftTrigger = false;
-            }
-            else  // If trigger is still held down
-            {
-                giselistiStrokeBuilder.AddSampleToStroke(currentStrokeGameObject, drawingMaterial, tip, LeftTriggerValue);
-            }
-            // Draw();
+            print ("drawing with left hand");
+            morphTriggerValue = RightTriggerValue;
+            sizeTriggerValue = LeftTriggerValue;
+            print ("left size trigger value: " + sizeTriggerValue);
+
         }
-        else  // If Left trigger is released
+
+        else
         {
-            if (currentStrokeGameObject != null)
-            {
-                giselistiStrokeBuilder.CompleteStroke(currentStrokeGameObject, drawingMaterial, tip, LeftTriggerValue);
-                firstTimePressingLeftTrigger = true;
-            }
+            print ("drawing with right hand");
+            morphTriggerValue = LeftTriggerValue;
+            sizeTriggerValue = RightTriggerValue;
+            print ("right size trigger value: " + sizeTriggerValue);
         }
 
 
-        if (isRightHandDrawing)
+        bool isDrawing = sizeTriggerValue > 0.01f;
+
+        // morphTriggerValue = morphTriggerValue;
+
+        // Drawing state
+
+        if (isDrawing)
         {
-            if (firstTimePressingRightTrigger)
+            // Stroke width interpolation
+            sizeTriggerValue = Mathf.Lerp(0.06f, 4f, sizeTriggerValue); // Adjust min/max
+            
+            if (firstTimePressingLeftTrigger || firstTimePressingRightTrigger)
             {
-                currentStrokeGameObject = giselistiStrokeBuilder.CreateStroke(drawingTransform, drawingMaterial, tip, RightTriggerValue);
-                firstTimePressingRightTrigger = false;
+                currentStrokeGameObject = giselistiStrokeBuilder.CreateStroke(drawingTransform, drawingMaterial, tip, morphTriggerValue, sizeTriggerValue);
+                firstTimePressingLeftTrigger = firstTimePressingRightTrigger = false;
             }
             else
             {
-                giselistiStrokeBuilder.AddSampleToStroke(currentStrokeGameObject, drawingMaterial, tip, RightTriggerValue);
+                giselistiStrokeBuilder.AddSampleToStroke(currentStrokeGameObject, drawingMaterial, tip, morphTriggerValue, sizeTriggerValue);
             }
         }
-        else  // If Right trigger is released
+        else
         {
             if (currentStrokeGameObject != null)
             {
-                giselistiStrokeBuilder.CompleteStroke(currentStrokeGameObject, drawingMaterial, tip, RightTriggerValue);
-                firstTimePressingRightTrigger = true;
+                giselistiStrokeBuilder.CompleteStroke(currentStrokeGameObject, drawingMaterial, tip, morphTriggerValue, sizeTriggerValue);
+                firstTimePressingLeftTrigger = firstTimePressingRightTrigger = true;
             }
         }
 
+        
+
+
     }
+
+//=================================================================================================================================
+    // private void OnLeftGrab(SelectEnterEventArgs args)
+    // {
+    //     // Check if left or right hand is grabbing with args
+    //     if (args.interactorObject.handedness == InteractorHandedness.Left)
+    //     {
+    //         isLeftGrabbed = true;
+
+    //     }
+    // }
+
+    // private void OnRightGrab(SelectEnterEventArgs args)
+    // {
+    //     if (args.interactorObject.handedness == InteractorHandedness.Right)
+    //     {
+    //         isRightGrabbed = true;
+    //     }
+    // }
+
+    // private void OnLeftRelease(SelectExitEventArgs args)
+    // {
+    //     if (args.interactorObject.handedness == InteractorHandedness.Left)
+    //     {
+    //         isLeftGrabbed = false;
+    //     }
+    // }
+
+    // private void OnRightRelease(SelectExitEventArgs args)
+    // {
+    //     if (args.interactorObject.handedness == InteractorHandedness.Right)
+    //     {
+    //         isRightGrabbed = false;
+    //     }
+    // }
+//========================================================================================================================================
 
     private void OnLeftGrab(SelectEnterEventArgs args)
     {
-        // Check if left or right hand is grabbing with args
         if (args.interactorObject.handedness == InteractorHandedness.Left)
         {
             isLeftGrabbed = true;
+            activeDrawingHand = XRNode.LeftHand;
         }
     }
 
@@ -141,10 +198,11 @@ public class Pen : MonoBehaviour
         if (args.interactorObject.handedness == InteractorHandedness.Right)
         {
             isRightGrabbed = true;
+            activeDrawingHand = XRNode.RightHand;
         }
     }
 
-    private void OnLeftRelease(SelectExitEventArgs args)
+        private void OnLeftRelease(SelectExitEventArgs args)
     {
         if (args.interactorObject.handedness == InteractorHandedness.Left)
         {
@@ -159,8 +217,6 @@ public class Pen : MonoBehaviour
             isRightGrabbed = false;
         }
     }
-
-
 
 
     private bool IsLeftTriggerPressed(UnityEngine.XR.InputDevice leftController)

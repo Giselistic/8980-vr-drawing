@@ -25,14 +25,13 @@ public class StrokeBuilder_Tube : MonoBehaviour
     [Tooltip("If true, texture wraps twice around the tube, otherwise wraps once.")]
     [SerializeField] private bool m_WrapTwice;
     [SerializeField] private bool BrushSizeWorking = true;
-    [Range(0.001f, 0.1f)] [SerializeField] private float SizeScale = 0.01f;
+    // [Range(0.001f, 0.1f)] [SerializeField] private float SizeScale = 0.01f;
 
     public TubeGeometry.TextureMode TexMode 
     { 
         get => m_TexMode;
         set => m_TexMode = value;
     }
-
 
     void Reset()
     {
@@ -43,7 +42,7 @@ public class StrokeBuilder_Tube : MonoBehaviour
     }
 
     // Remember: LEFT hand is Giselle's drawing hand!!! XD :P ^_^ T^T :v 
-    public GameObject CreateStroke(Transform drawing, Material drawingMaterial, Transform tip, float LeftTriggerValue)
+    public GameObject CreateStroke(Transform drawing, Material drawingMaterial, Transform tip, float morphTriggerValue, float sizeTriggerValue)
     {
         s_Num++;
         GameObject go = new GameObject("Tube Stroke " + s_Num, typeof(TubeGeometry));
@@ -55,22 +54,22 @@ public class StrokeBuilder_Tube : MonoBehaviour
         tube.SetWrapTwice(m_WrapTwice);
         tube.SetTexMode(m_TexMode);
         tube.BrushSizeWorking = BrushSizeWorking;
-        tube.SizeScale = SizeScale;
-        float penScale = LeftTriggerValue/10f;
-        tube.Init(tip.position, tip.rotation, penScale, drawingMaterial.color, LeftTriggerValue);
+        // tube.SizeScale = SizeScale;
+        float penScale = sizeTriggerValue/10f;
+        tube.Init();
         return go;
     }
 
-    public void AddSampleToStroke(GameObject strokeObject, Material drawingMaterial, Transform tip, float LeftTriggerValue)
+    public void AddSampleToStroke(GameObject strokeObject, Material drawingMaterial, Transform tip, float morphTriggerValue, float sizeTriggerValue)
     {
         TubeGeometry tube = strokeObject.GetComponent<TubeGeometry>();
         Debug.Assert(tube != null);
-        float penScale = LeftTriggerValue/10f;
+        float penScale = sizeTriggerValue/10f;
     
-        tube.AddSample(tip.position, tip.rotation, penScale, drawingMaterial.color, LeftTriggerValue);
+        tube.AddSample(tip.position, tip.rotation, penScale, drawingMaterial.color, morphTriggerValue, sizeTriggerValue);
     }
 
-    public void CompleteStroke(GameObject strokeObject, Material drawingMaterial, Transform tip, float LeftTriggerValue)
+    public void CompleteStroke(GameObject strokeObject, Material drawingMaterial, Transform tip, float morphTriggerValue, float sizeTriggerValue)
     {
         TubeGeometry tube = strokeObject.GetComponent<TubeGeometry>();
         
@@ -83,10 +82,10 @@ public class StrokeBuilder_Tube : MonoBehaviour
         // }
         // -----
 
-        float penScale = LeftTriggerValue/10f;
+        //float penScale = sizeTriggerValue/10f;
         // float widthRoom = Brush.SizeToMeters(brushState.size) * brushState.aspect.x * brushState.pressure;
         // float heightRoom = Brush.SizeToMeters(brushState.size) * brushState.aspect.y * brushState.pressure;
         // heightRoom /= m_AspectRatio; // take tube's inherent aspect ratio into account as well
-        tube.Complete(tip.position, tip.rotation, penScale, penScale, drawingMaterial.color, LeftTriggerValue);
+        tube.Complete();
     }
 }

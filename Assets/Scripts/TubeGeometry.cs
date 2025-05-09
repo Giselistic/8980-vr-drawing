@@ -40,7 +40,7 @@ public class TubeGeometry : MonoBehaviour
     private Vector3 m_LastBrushPosInRoom;
 
     public bool BrushSizeWorking = true;
-    public float SizeScale = 0.01f;
+    public float SizeScale = 0.1f;
 
 
     private void Reset()
@@ -53,7 +53,7 @@ public class TubeGeometry : MonoBehaviour
         m_TexMode = TextureMode.RepeatTexture;
     }
 
-    public void Init(Vector3 brushPosRoom, Quaternion brushRotRoom, float penScale, Color brushColor, float pressure)
+    public void Init()
     {
         m_Vertices = new List<Vector3>();
         m_Normals = new List<Vector3>();
@@ -68,16 +68,9 @@ public class TubeGeometry : MonoBehaviour
         m_Mesh.MarkDynamic();
 
         m_LastV = 0.0f;
-
-        // Make the very first sample have a scale of zero to bring the tube to a point
-        //AddSample(brushPosRoom, brushRotRoom, Vector3.zero, brushColor);
-        // If the current scale is > 0, then add another sample at the same pos & rot
-        //if (brushScaleRoom != Vector3.zero) {
-        //    AddSample(brushPosRoom, brushRotRoom, brushScaleRoom, brushColor);
-        //}
     }
 
-    public void AddSample(Vector3 brushPosWorld, Quaternion brushRotWorld, float penScale, Color brushColor, float pressure)
+    public void AddSample(Vector3 brushPosWorld, Quaternion brushRotWorld, float penScale, Color brushColor, float morphTriggerValue, float sizeTriggerValue)
     {
         // convert these into the local space of the stroke, which has already been added to the artwork parent
         Vector3 brushPosLocal = this.transform.WorldPointToLocalSpace(brushPosWorld);
@@ -92,9 +85,9 @@ public class TubeGeometry : MonoBehaviour
         if (BrushSizeWorking)
         {
             brushRightLocal = brushRotLocal * Vector3.right;
-            brushRightScaledLocal = brushRightLocal * transform.WorldLengthToLocalSpace(0.5f * penScale);
+            brushRightScaledLocal = brushRightLocal * transform.WorldLengthToLocalSpace(penScale);
             brushUpLocal = brushRotLocal * Vector3.up;
-            brushUpScaledLocal = brushUpLocal * transform.WorldLengthToLocalSpace(0.5f * penScale);
+            brushUpScaledLocal = brushUpLocal * transform.WorldLengthToLocalSpace(penScale);
         }
         else
         {
@@ -154,13 +147,13 @@ public class TubeGeometry : MonoBehaviour
             float x_square = Mathf.Sign(x_circle);
             float y_square = Mathf.Sign(y_circle);
 
-            float morphX = Mathf.Lerp(x_square, x_circle, pressure);
-            float morphY = Mathf.Lerp(y_square, y_circle, pressure);
+            float morphX = Mathf.Lerp(x_square, x_circle, morphTriggerValue);
+            float morphY = Mathf.Lerp(y_square, y_circle, morphTriggerValue);
 
             // float morphX = x_circle;
             // float morphY = y_circle;
 
-            Vector3 thisVert = brushPosLocal + brushRightScaledLocal * morphX + brushUpScaledLocal * morphY;
+            Vector3 thisVert = brushPosLocal + brushRightScaledLocal * sizeTriggerValue * morphX + brushUpScaledLocal * sizeTriggerValue * morphY;
 
             // if (BrushSizeWorking)
             // {
@@ -263,19 +256,9 @@ public class TubeGeometry : MonoBehaviour
     }
 
 
-    public void Complete(Vector3 brushPosRoom, Quaternion brushRotRoom, float brushWidthRoom, float brushHeightRoom, Color brushColor, float pressure)
+    public void Complete()
     {
-        // If the current scale is > 0, then add a sample
-        //if (brushScaleRoom != Vector3.zero) {
-        //    AddSample(brushPosRoom, brushRotRoom, brushScaleRoom, brushColor);
-        //}
-        // Make sure the very first last sample has a scale of zero to bring the tube to a point
-        //AddSample(brushPosRoom, brushRotRoom, Vector3.zero, brushColor);
 
-
-        // TODO: When the meshes are created we use the MarkDynamic() call to tell Unity they will change dynamically.
-        // Not sure if there is a way to now tell Unity that we are done changing them dynamically.  If so, it
-        // might provide some rendering performance benefits.  For now, leaving as is.
     }
 
     public void SetMaterial(Material mat)

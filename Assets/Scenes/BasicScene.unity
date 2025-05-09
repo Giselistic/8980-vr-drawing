@@ -786,14 +786,6 @@ MonoBehaviour:
   tip: {fileID: 254269054}
   drawingMaterial: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   tipMaterial: {fileID: 2100000, guid: 2b1a338fe03400541b07dd5ee726a66d, type: 2}
-  penWidth: 0.01
-  penColors:
-  - {r: 1, g: 0.49999988, b: 0.58303154, a: 1}
-  - {r: 0.54509807, g: 0.8852704, b: 1, a: 1}
-  - {r: 0.54509807, g: 1, b: 0.5513041, a: 1}
-  - {r: 1, g: 0.964175, b: 0.61320746, a: 1}
-  cubeToDraw: {fileID: 0}
-  sphereToDraw: {fileID: 0}
   giselistiStrokeBuilder: {fileID: 0}
   drawingTransform: {fileID: 0}
   grabInteractable: {fileID: 473395391}
@@ -1140,111 +1132,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gripInputActionReference: {fileID: 6558622148059887818, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   triggerInputActionReference: {fileID: -4289430672226363583, guid: c348712bda248c246b8c49b3db54643f, type: 3}
---- !u!1 &703308477
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 703308478}
-  - component: {fileID: 703308481}
-  - component: {fileID: 703308480}
-  - component: {fileID: 703308479}
-  m_Layer: 0
-  m_Name: Cube
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &703308478
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 703308477}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.42, z: 0}
-  m_LocalScale: {x: 0.75, y: 0.21428572, z: 0.75}
-  m_ConstrainProportionsScale: 1
-  m_Children: []
-  m_Father: {fileID: 1640648768}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &703308479
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 703308477}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!23 &703308480
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 703308477}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &703308481
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 703308477}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &756192406
 GameObject:
   m_ObjectHideFlags: 0
@@ -2190,8 +2077,7 @@ MonoBehaviour:
   m_AspectRatio: 1
   m_NFaces: 8
   m_WrapTwice: 0
-  BrushSizeWorking: 0
-  SizeScale: 0.01
+  BrushSizeWorking: 1
 --- !u!1 &1591370560 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 202364687, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
@@ -2392,7 +2278,6 @@ Transform:
   m_Children:
   - {fileID: 1843878278}
   - {fileID: 261845657}
-  - {fileID: 703308478}
   m_Father: {fileID: 1180525673}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1640648769
@@ -2410,14 +2295,6 @@ MonoBehaviour:
   tip: {fileID: 261845657}
   drawingMaterial: {fileID: 2100000, guid: fc0c9db0c9a41824ca78f8b85f951b07, type: 2}
   tipMaterial: {fileID: 2100000, guid: 2b1a338fe03400541b07dd5ee726a66d, type: 2}
-  penWidth: 0.01
-  penColors:
-  - {r: 0.5882353, g: 0.15686275, b: 0.58303154, a: 0.5882353}
-  - {r: 0.1254902, g: 0.35686275, b: 1, a: 0.5882353}
-  - {r: 0.22352941, g: 1, b: 0.67058825, a: 0.5882353}
-  - {r: 1, g: 0.6784314, b: 0.29411766, a: 0.5882353}
-  cubeToDraw: {fileID: 4547644538743631321, guid: d916002259ab58e45be8a95956a70547, type: 3}
-  sphereToDraw: {fileID: 7007245563051620879, guid: 00a6cc24003b5bd49a395198b298e871, type: 3}
   giselistiStrokeBuilder: {fileID: 1535641883}
   drawingTransform: {fileID: 1779285988}
   grabInteractable: {fileID: 1640648770}
