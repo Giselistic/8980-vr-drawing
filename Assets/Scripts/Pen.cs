@@ -80,10 +80,10 @@ public class Pen : MonoBehaviour
     }
 
     private void UpdateTriggerValues()
-{
-    leftController.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out LeftTriggerValue);
-    rightController.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out RightTriggerValue);
-}
+    {
+        leftController.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out LeftTriggerValue);
+        rightController.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out RightTriggerValue);
+    }
 
 
 // ===============================================================================================================================
@@ -97,19 +97,19 @@ public class Pen : MonoBehaviour
 
         if (activeDrawingHand == XRNode.LeftHand)
         {
-            print ("drawing with left hand");
+            // print ("drawing with left hand");
             morphTriggerValue = RightTriggerValue;
             sizeTriggerValue = LeftTriggerValue;
-            print ("left size trigger value: " + sizeTriggerValue);
+            // print ("left size trigger value: " + sizeTriggerValue);
 
         }
 
         else
         {
-            print ("drawing with right hand");
+            // print ("drawing with right hand");
             morphTriggerValue = LeftTriggerValue;
             sizeTriggerValue = RightTriggerValue;
-            print ("right size trigger value: " + sizeTriggerValue);
+            // print ("right size trigger value: " + sizeTriggerValue);
         }
 
 
