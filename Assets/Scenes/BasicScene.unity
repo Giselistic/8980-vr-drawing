@@ -588,9 +588,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 202364688, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.13350853
+      objectReference: {fileID: 0}
+    - target: {fileID: 202364688, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.025487304
+      objectReference: {fileID: 0}
+    - target: {fileID: 202364688, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.934843
+      objectReference: {fileID: 0}
+    - target: {fileID: 202364688, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.35506144
+      objectReference: {fileID: 0}
+    - target: {fileID: 202364688, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 41.594
+      objectReference: {fileID: 0}
     - target: {fileID: 1670256624, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1670256625, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.3414
       objectReference: {fileID: 0}
     - target: {fileID: 1767192439, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_ClearFlags
@@ -703,6 +727,9 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 202364688, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      insertIndex: 0
+      addedObject: {fileID: 1640648768}
     - targetCorrespondingSourceObject: {fileID: 8366379412631108205, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 980138418}
@@ -748,7 +775,7 @@ GameObject:
   - component: {fileID: 473395391}
   - component: {fileID: 473395390}
   m_Layer: 0
-  m_Name: Pen
+  m_Name: Pen_Old
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -785,12 +812,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tip: {fileID: 254269054}
   drawingMaterial: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
-  tipMaterial: {fileID: 2100000, guid: 2b1a338fe03400541b07dd5ee726a66d, type: 2}
   giselistiStrokeBuilder: {fileID: 0}
   drawingTransform: {fileID: 0}
-  grabInteractable: {fileID: 473395391}
-  leftHandInteractor: {fileID: 1591370567}
-  rightHandInteractor: {fileID: 329692938}
+  penHandSwitcher: {fileID: 0}
 --- !u!114 &473395391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1525,6 +1549,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 980138417}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1111740686
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1111740688}
+  - component: {fileID: 1111740687}
+  m_Layer: 0
+  m_Name: PenHandSwitcher
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1111740687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1111740686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4a7298077a8e6842b08e1868faff37a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pen: {fileID: 1640648769}
+  rightController: {fileID: 329692931}
+  leftController: {fileID: 1591370560}
+  CurrentActiveDrawingHand: 0
+--- !u!4 &1111740688
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1111740686}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.16771078, y: 1.3061833, z: 0.44248888}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1154676103
 GameObject:
   m_ObjectHideFlags: 0
@@ -1603,7 +1675,6 @@ Transform:
   - {fileID: 1434922306}
   - {fileID: 1823200794}
   - {fileID: 473395389}
-  - {fileID: 1640648768}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1249617917
@@ -2286,6 +2357,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_PhysicsTriggerInteraction: 1
+--- !u!4 &1591370572 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 202364688, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+  m_PrefabInstance: {fileID: 441087506}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1640648767
 GameObject:
   m_ObjectHideFlags: 0
@@ -2302,7 +2378,7 @@ GameObject:
   - component: {fileID: 1640648770}
   - component: {fileID: 1640648769}
   m_Layer: 0
-  m_Name: PenTest
+  m_Name: Pen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2316,15 +2392,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1640648767}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: -0.3090171, w: 0.95105654}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.02, y: 0.07, z: 0.02}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1843878278}
   - {fileID: 261845657}
-  m_Father: {fileID: 1180525673}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 1591370572}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -36}
 --- !u!114 &1640648769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2339,12 +2415,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tip: {fileID: 261845657}
   drawingMaterial: {fileID: 2100000, guid: fc0c9db0c9a41824ca78f8b85f951b07, type: 2}
-  tipMaterial: {fileID: 2100000, guid: 2b1a338fe03400541b07dd5ee726a66d, type: 2}
   giselistiStrokeBuilder: {fileID: 1535641883}
   drawingTransform: {fileID: 1779285988}
-  grabInteractable: {fileID: 1640648770}
-  leftHandInteractor: {fileID: 1591370567}
-  rightHandInteractor: {fileID: 329692938}
+  penHandSwitcher: {fileID: 1111740687}
 --- !u!114 &1640648770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2352,7 +2425,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1640648767}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ad34abafad169848a38072baa96cdb2, type: 3}
   m_Name: 
@@ -3177,4 +3250,5 @@ SceneRoots:
   - {fileID: 1249617921}
   - {fileID: 1180525673}
   - {fileID: 364654032}
+  - {fileID: 1111740688}
   - {fileID: 1779285988}
